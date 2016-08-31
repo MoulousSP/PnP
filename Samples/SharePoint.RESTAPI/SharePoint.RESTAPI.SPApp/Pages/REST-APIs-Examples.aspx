@@ -34,7 +34,8 @@
         <br /><hr /><br />
         <div class="Command"><input type="button" value="Create a new library" onclick="createNewLibrary()" /></div>        
         <div class="Command"><input type="button" value="Upload a new file" onclick="uploadFile()" /></div>
-        <div class="Command"><input type="button" value="Update a file" onclick="updateFile()" /></div>
+         <input type="file" id="my_file" />
+         <div class="Command"><input type="button" value="Update a file" onclick="updateFile()" /></div>
         <div class="Command"><input type="button" value="Check-out a file" onclick="checkOutFile()" /></div>
         <div class="Command"><input type="button" value="Check-in a file" onclick="checkInFile()" /></div>
         <div class="Command"><input type="button" value="Delete a file" onclick="deleteFile()" /></div>

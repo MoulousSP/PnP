@@ -17,8 +17,71 @@ $(document).ready(function () {
 
     var scriptbase = hostweburl + "/_layouts/15/";
 
+    setTheuploadFile();
     $.getScript(scriptbase + "SP.RequestExecutor.js", retrieveFormDigest);
 });
+
+
+function setTheuploadFile()
+{
+
+    $("#my_file").on("change", function () {
+        // this.value OR $(this).val()
+        clearStatus();
+      
+
+        var fileName;
+        var datafile = '';
+        var reader = new FileReader();
+        reader.onload = function (result) {
+
+            var byteArray = new Uint8Array(result.target.result)
+            for (var i = 0; i < byteArray.byteLength; i++) {
+                datafile += String.fromCharCode(byteArray[i])
+            }
+            uploadFile(datafile, fileName);
+
+        }
+
+        fileName = this.files[0].name;
+        reader.readAsArrayBuffer(this.files[0]);
+        event.preventDefault();
+    });
+
+
+
+    //upload a file. 
+    function uploadFile(fileContent, filename) {
+        retrieveFormDigest();
+        var executor;
+        // Initialize the RequestExecutor with the app web URL. 
+        executor = new SP.RequestExecutor(appweburl);
+
+        var fileUrl = filename;//$("#createFileBox")[0].value+".docx";
+
+
+        executor.executeAsync({
+            url: appweburl + "/_api/SP.AppContextSite(@target)/web/lists/GetByTitle('RESTCreatedLibrary')/RootFolder/Files/Add(url=@url,overwrite=@overwrite)?@target='" + hostweburl + "'&@url='" + fileUrl + "'&@overwrite=true&$Expand=ListItemAllFields",
+            method: "POST",
+            body: fileContent,
+            binaryStringRequestBody: true,
+            headers: {
+                "Accept": "application/json; odata=verbose", "content-type": "application/json; odata=verbose", "X-RequestDigest": formDigestValue
+            },
+            success: function (data) {
+                var jsonObject = JSON.parse(data.body);
+                alert(data.body);
+            },
+            error: function (data, errorCode, errorMessage) {
+                var jsonObject = JSON.parse(data.body);
+                alert("Could not create the file: " + jsonObject.error.message.value);
+            }
+        });
+    }
+
+
+}
+
 
 // Function to retrieve a query string value. 
 // For production purposes you may want to use 
